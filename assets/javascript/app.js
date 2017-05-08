@@ -7,52 +7,63 @@ function makeHTML() {
     }
 }
 
-function updatePage(q) {
-    $('#question').text(q.q);
-    for (let i = 0; i < q.answers.length; i++) {
-        $("#"+i).text(q.answers[i]);
-    }
+function getRandom(max) {
+    return Math.floor(Math.random() * max);
 }
 
-function getRandom(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-}
+function newQuestion() {
 
-function getQuestion() {
-	function arrShuff(arr){
-	  tempArr = []
-	  let cnt = arr.length;
-	  for (let i = 0; i < cnt; i++){
-	    let x = Math.floor(Math.random() * arr.length);
-	    let item = arr.splice(x, 1);
-	    tempArr.push(item[0]);
-	  }
-	  return tempArr;
-	}
-    let rand = getRandom(0, qList.length);
-    console.log(rand);
-    if (qsUsed.indexOf(rand) === -1) {
-        qsUsed.push(rand);
-        let qToReturn = qList[rand];
+    function getQuestion() {
+
+        function arrShuff(arr) {
+            tempArr = []
+            let cnt = arr.length;
+            for (let i = 0; i < cnt; i++) {
+                let x = getRandom(arr.length);
+                let item = arr.splice(x, 1);
+                tempArr.push(item[0]);
+            }
+            return tempArr;
+        }
+        let rand = getRandom(qList.length);
+        let qToReturn = qList.splice(rand, 1)[0];
         qToReturn.answers = arrShuff(qToReturn.answers);
         return qToReturn;
-    } else {
-        getQuestion();
     }
+
+    function updatePage(q) {
+        $('#question').text(q.q);
+        for (let i = 0; i < q.answers.length; i++) {
+            $("#" + i).text(q.answers[i]);
+        }
+    }
+
+    curQ = getQuestion();
+    if (curQ !== undefined){
+    	updatePage(curQ);
+    }
+
 }
 
-let qsUsed = [];
+let curQ;
+let numberCorrect = 0;
+let numberWrong = 0;
 
 function checkAnswer(num) {
-    console.log(num)
     ans = curQ.answers[num]
     if (ans === curQ.correctAnswer) {
-        console.log("correct!");
+        numberCorrect += 1;
     } else {
-        console.log("Wrong!");
+        numberWrong += 1;
     }
+
+    if (numberCorrect + numberWrong < 10) {
+	    newQuestion();
+    } else {
+    	console.log("Game Over. Number Correct: " + numberCorrect + ", Number Wrong: " + numberWrong)
+    }
+
 }
 
 makeHTML();
-let curQ = getQuestion();
-updatePage(curQ);
+newQuestion();

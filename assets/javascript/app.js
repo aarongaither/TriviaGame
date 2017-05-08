@@ -7,7 +7,9 @@ function makeHTML() {
     }
 }
 
+//game object
 go = {
+	state: "start",
     qUsed: [],
     numberCorrect: 0,
     numberWrong: 0,
@@ -40,26 +42,66 @@ go = {
 
         this.curQ = getQuestion();
         updatePage(this.curQ);
+        to.start(to.questionLimit);
 
     },
     checkAnswer: function(num) {
-        ans = this.curQ.answers[num]
-        if (ans === this.curQ.correctAnswer) {
-            this.numberCorrect += 1;
-        } else {
-            this.numberWrong += 1;
-        }
-        this.qUsed.push(this.curQ);
-        if (this.numberCorrect + this.numberWrong < 10) {
-            this.newQuestion();
-        } else {
-            console.log("Game Over. Number Correct: " + this.numberCorrect + ", Number Wrong: " + this.numberWrong)
+        if (this.state === "playing") {
+            to.stop();
+            ans = this.curQ.answers[num]
+            if (ans === this.curQ.correctAnswer) {
+                this.numberCorrect += 1;
+            } else {
+                this.numberWrong += 1;
+            }
+            this.qUsed.push(this.curQ);
+            if (this.numberCorrect + this.numberWrong < 10) {
+                this.newQuestion();
+            } else {
+            	this.state = "over";
+                console.log("Game Over. Number Correct: " + this.numberCorrect + ", Number Wrong: " + this.numberWrong)
+            }
         }
     },
-    getRandom: function (max) {
+    getRandom: function(max) {
         return Math.floor(Math.random() * max);
     }
 }
 
+//timer object
+to = {
+    running: false,
+    countID: "",
+    time: 0,
+    questionLimit: 10,
+    switchLimit: 4,
+    start: function(limit) {
+        if (!this.running) {
+            this.running = true;
+            this.time = limit;
+            this.updateDisplay();
+            this.countID = setInterval(function() {
+                to.count();
+            }, 1000);
+        }
+    },
+    count: function() {
+        this.time -= 1;
+        this.updateDisplay();
+        if (this.time < 1) {
+            this.stop();
+            //game logic tie in here
+        }
+    },
+    stop: function() {
+        this.running = false;
+        clearInterval(this.countID);
+    },
+    updateDisplay: function() {
+        $('#timer').text(this.time);
+    }
+}
+
 makeHTML();
+go.state = "playing";
 go.newQuestion();

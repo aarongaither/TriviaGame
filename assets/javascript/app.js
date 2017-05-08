@@ -29,11 +29,11 @@ function getQuestion() {
 	  }
 	  return tempArr;
 	}
-    let rand = getRandom(0, qS.length);
+    let rand = getRandom(0, qList.length);
     console.log(rand);
     if (qsUsed.indexOf(rand) === -1) {
         qsUsed.push(rand);
-        let qToReturn = qS[rand];
+        let qToReturn = qList[rand];
         qToReturn.answers = arrShuff(qToReturn.answers);
         return qToReturn;
     } else {
@@ -52,9 +52,6 @@ function checkAnswer(num) {
         console.log("Wrong!");
     }
 }
-
-
-
 
 makeHTML();
 let curQ = getQuestion();

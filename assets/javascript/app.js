@@ -9,14 +9,21 @@ function makeHTML() {
 
 //game object
 go = {
-	state: "start",
+    state: 'start',
     qUsed: [],
     numberCorrect: 0,
     numberWrong: 0,
+    init: function() {
+        this.state = 'playing';
+        this.numberCorrect = 0;
+        this.numberWrong = 0;
+        this.resetQuestions();
+        this.newQuestion();
+    },
     newQuestion: function() {
+        console.log("getting new Q...")
 
         function getQuestion() {
-
             function arrShuff(arr) {
                 tempArr = []
                 let cnt = arr.length;
@@ -36,52 +43,63 @@ go = {
         function updatePage(quesObj) {
             $('#question').text(quesObj.q);
             for (let i = 0; i < quesObj.answers.length; i++) {
-                $("#" + i).text(quesObj.answers[i]);
+                $('#' + i).text(quesObj.answers[i]).removeClass('correct wrong');
             }
         }
-
         this.curQ = getQuestion();
         updatePage(this.curQ);
         to.start(to.questionLimit);
-
     },
     checkAnswer: function(num) {
-        if (this.state === "playing") {
+        if (this.state === 'playing') {
             to.stop();
-            ans = this.curQ.answers[num]
-            if (ans === this.curQ.correctAnswer) {
-                this.numberCorrect += 1;
-            } else {
-                this.numberWrong += 1;
-            }
+            let correctID = this.curQ.answers.indexOf(this.curQ.correctAnswer);
+            parseInt(num) === correctID ? this.answerIsCorrect(num) : this.answerIsWrong(num, correctID);
             this.qUsed.push(this.curQ);
-            if (this.numberCorrect + this.numberWrong < 10) {
-                this.newQuestion();
-            } else {
-            	this.state = "over";
-                console.log("Game Over. Number Correct: " + this.numberCorrect + ", Number Wrong: " + this.numberWrong)
-            }
+            this.numberCorrect + this.numberWrong < 10 ? setTimeout(() => {this.newQuestion();}, 2000) : this.gameOver();
         }
+    },
+    answerIsCorrect: function(answerID) {
+        this.numberCorrect += 1;
+        $('#' + answerID).addClass('correct');
+    },
+    answerIsWrong: function(answerID, rightAnswerID) {
+        this.numberWrong += 1;
+        $('#' + answerID).addClass('wrong');
+        $('#' + rightAnswerID).addClass('correct');
+    },
+    timeUp: function () {
+    	this.numberWrong += 1;
     },
     getRandom: function(max) {
         return Math.floor(Math.random() * max);
+    },
+    resetQuestions: function() {
+        let cnt = this.qUsed.length;
+        for (let i = 0; i < cnt; i++) {
+            qList.push(this.qUsed.pop())
+        }
+    },
+    gameOver: function() {
+        this.state = 'over';
+        console.log('Game Over. Number Correct: ' + this.numberCorrect + ', Number Wrong: ' + this.numberWrong)
     }
 }
 
 //timer object
 to = {
     running: false,
-    countID: "",
+    countID: '',
     time: 0,
     questionLimit: 10,
     switchLimit: 4,
-    start: function(limit) {
+    start: function(limit, type) {
         if (!this.running) {
             this.running = true;
             this.time = limit;
             this.updateDisplay();
-            this.countID = setInterval(function() {
-                to.count();
+            this.countID = setInterval(() => {
+                this.count();
             }, 1000);
         }
     },
@@ -99,9 +117,11 @@ to = {
     },
     updateDisplay: function() {
         $('#timer').text(this.time);
+    },
+    clearDisplay: function() {
+        $('#timer').text('');
     }
 }
 
 makeHTML();
-go.state = "playing";
-go.newQuestion();
+go.init();

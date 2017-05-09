@@ -52,7 +52,7 @@ let qList = [{
     answers: ["32", "18", "13", "24"],
     correctAnswer: "32"
 }, {
-    q: "Approximately how many many different sounds can a cat make?",
+    q: "Approximately how many different sounds can a cat make?",
     answers: ["100", "30", "70", "50"],
     correctAnswer: "100"
 }, {

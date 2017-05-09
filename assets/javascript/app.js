@@ -61,6 +61,7 @@ go = {
     },
     answerIsCorrect: function(answerID) {
         this.numberCorrect += 1;
+        $('#score').text(this.numberCorrect);
         $('#' + answerID).addClass('correct');
     },
     answerIsWrong: function(answerID, rightAnswerID) {

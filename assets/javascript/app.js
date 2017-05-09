@@ -69,9 +69,6 @@ go = {
         $('#' + answerID).addClass('wrong');
         $('#' + rightAnswerID).addClass('correct');
     },
-    timeUp: function () {
-    	this.numberWrong += 1;
-    },
     getRandom: function(max) {
         return Math.floor(Math.random() * max);
     },
@@ -108,8 +105,7 @@ to = {
         this.time -= 1;
         this.updateDisplay();
         if (this.time < 1) {
-            this.stop();
-            //game logic tie in here
+            go.checkAnswer(4);
         }
     },
     stop: function() {

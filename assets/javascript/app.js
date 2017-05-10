@@ -1,4 +1,8 @@
-function makeHTML() {
+movieList = actionMovies;
+
+function makeQuestionHTML() {
+    $('#main').append($('<div>').addClass('row').attr('id','questionRow'));
+    $('#main').append($('<div>').addClass('row').attr('id','answerRow'));
     $('#questionRow').append($('<div>').addClass('question').attr('id', 'question').text('question goes here'));
     for (let i = 0; i < 4; i++) {
         let answerDiv = $('<div>').addClass('answer').attr('id', i).text('answer ' + i)
@@ -11,6 +15,8 @@ function makeHTML() {
 go = {
     state: 'start',
     qUsed: [],
+    answers: [],
+    curA: '',
     numberCorrect: 0,
     numberWrong: 0,
     init: function() {
@@ -21,41 +27,55 @@ go = {
         this.newQuestion();
     },
     newQuestion: function() {
-        console.log("getting new Q...")
-
-        function getQuestion() {
-            function arrShuff(arr) {
-                tempArr = []
-                let cnt = arr.length;
-                for (let i = 0; i < cnt; i++) {
-                    let x = go.getRandom(arr.length);
-                    let item = arr.splice(x, 1);
-                    tempArr.push(item[0]);
-                }
-                return tempArr;
-            }
-            let rand = go.getRandom(qList.length);
-            let qToReturn = qList.splice(rand, 1)[0];
-            qToReturn.answers = arrShuff(qToReturn.answers);
-            return qToReturn;
+        function getRandom(max) {
+            return Math.floor(Math.random() * max);
         }
 
-        function updatePage(quesObj) {
-            $('#question').text(quesObj.q);
-            for (let i = 0; i < quesObj.answers.length; i++) {
-                $('#' + i).text(quesObj.answers[i]).removeClass('correct wrong');
+        function updatePage(movieObj) {
+            $('#question').text(movieObj.Plot);
+            for (let i = 0; i < go.answers.length; i++) {
+                $('#' + i).text(go.answers[i]).removeClass('correct wrong');
             }
         }
-        this.curQ = getQuestion();
-        updatePage(this.curQ);
-        to.start(to.questionLimit);
+
+        function fetchMovie() {
+            let title = go.curA.replace(/ /g, '+');
+            let queryURL = 'http://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
+            $.ajax({
+                url: queryURL,
+                method: 'GET'
+            }).done(function(response) {
+                updatePage(response);
+                to.start(to.questionLimit);
+                go.curQ = response;
+                go.state = 'playing';
+            });
+        }
+
+        //splice 4 answers from main array into game array
+        for (let i = 0; i < 4; i++) {
+            let rand = getRandom(movieList.length);
+            go.answers.push(movieList.splice(rand, 1)[0]);
+        }
+        //select one answer as the correct one
+        console.log('answers', go.answers);
+        let rand = getRandom(go.answers.length);
+        go.curA = go.answers[rand];
+        //fetch movie info for our correct answer
+        fetchMovie();
+
     },
     checkAnswer: function(num) {
         if (this.state === 'playing') {
+            this.state = 'guessed'
             to.stop();
-            let correctID = this.curQ.answers.indexOf(this.curQ.correctAnswer);
+            let correctID = this.answers.indexOf(this.curA);
             parseInt(num) === correctID ? this.answerIsCorrect(num) : this.answerIsWrong(num, correctID);
-            this.qUsed.push(this.curQ);
+            let cnt = this.answers.length;
+            for (let i = 0; i < cnt; i++) {
+                let item = this.answers.pop();
+                item === this.curA ? this.qUsed.push(item) : movieList.push(item);
+            }
             this.numberCorrect + this.numberWrong < 10 ? setTimeout(() => { this.newQuestion(); }, 2000) : this.gameOver();
         }
     },
@@ -69,13 +89,10 @@ go = {
         $('#' + answerID).addClass('wrong');
         $('#' + rightAnswerID).addClass('correct');
     },
-    getRandom: function(max) {
-        return Math.floor(Math.random() * max);
-    },
     resetQuestions: function() {
         let cnt = this.qUsed.length;
         for (let i = 0; i < cnt; i++) {
-            qList.push(this.qUsed.pop())
+            movieList.push(this.qUsed.pop())
         }
     },
     gameOver: function() {
@@ -120,5 +137,5 @@ to = {
     }
 }
 
-makeHTML();
+makeQuestionHTML();
 go.init();

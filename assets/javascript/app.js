@@ -56,7 +56,7 @@ go = {
             let correctID = this.curQ.answers.indexOf(this.curQ.correctAnswer);
             parseInt(num) === correctID ? this.answerIsCorrect(num) : this.answerIsWrong(num, correctID);
             this.qUsed.push(this.curQ);
-            this.numberCorrect + this.numberWrong < 10 ? setTimeout(() => {this.newQuestion();}, 2000) : this.gameOver();
+            this.numberCorrect + this.numberWrong < 10 ? setTimeout(() => { this.newQuestion(); }, 2000) : this.gameOver();
         }
     },
     answerIsCorrect: function(answerID) {

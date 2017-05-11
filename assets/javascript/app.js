@@ -1,72 +1,3 @@
-function makeStartPage() {
-    $('#main').append($('<section>').addClass('row startRow').append($('<p>').text(introText)));
-    $('#main').append($('<section>').addClass('row startRow').attr('id', 'buttonRow')
-        .append($('<button>').addClass('startBtn').text('Action!')
-            .click(function() {
-                $('section').remove('.startRow');
-                go.init();
-            })
-        )
-    );
-}
-
-function makeQuestionHTML() {
-    $('section').remove();
-    $('img').remove();
-    $('#main').append($('<section>').addClass('row qRow').attr('id', 'timerRow'));
-    $('#timerRow').append($('<div>').addClass('timer').text('Time Remaining: ').append($('<span>').attr('id', 'timer')));
-    $('#timerRow').append($('<div>').addClass('score').text('Score: ').append($('<span>').attr('id', 'score').text(go.numberCorrect)));
-    $('#main').append($('<section>').addClass('row qRow').attr('id', 'questionRow'));
-    $('#main').append($('<section>').addClass('row qRow').attr('id', 'answerRow'));
-    $('#questionRow').append($('<div>').addClass('question').attr('id', 'question').text('question goes here'));
-    for (let i = 0; i < 4; i++) {
-        let answerDiv = $('<div>').addClass('answer').attr('id', i).text('answer ' + i)
-            .click(function() { go.checkAnswer(this.id); });
-        $('#answerRow').append(answerDiv);
-    }
-}
-
-function makeEndingPage() {
-    $('section').remove();
-    $('img').remove();
-    let resultSec = $('<section>').addClass('row');
-    $('#main').append(resultSec);
-    let numRight = go.numberCorrect;
-    let msg = '';
-    if (numRight < 5) {
-        msg = 'Better luck next time!';
-    } else if (numRight < 9) {
-        msg = 'Good job!';
-    } else {
-        msg = "You're an expert!";
-    }
-    resultSec.append($('<p>').text(msg));
-    resultSec.append($('<p>').text('Correct: ' + go.numberCorrect));
-    resultSec.append($('<p>').text('Wrong: ' + go.numberWrong));
-    let percRight = go.numberCorrect / go.quizLength * 100;
-    resultSec.append($('<p>').text("That's " + percRight + '% correct!'));
-    resultSec.append($('<button>').text("Restart")
-        .click(function() { go.init(); })
-    )
-
-}
-
-function showAnswerPic(sts) {
-    $('section').remove('.qRow');
-    let textSec = $('<section>').addClass('row');
-    textSec.append($('<p>').text(sts));
-    textSec.append($('<p>').text("The right answer was " + go.curA + '.'));
-    $('#main').append(textSec);
-    $('#main').append($('<img>').attr('src', go.curQ.Poster));
-    let detSec = $('<section>').addClass('row');
-    $('#main').append(detSec);
-    let movieAtt = ['Director', 'Year', 'Rated', 'Released', 'Runtime'];
-    for (let i = 0; i < movieAtt.length; i++) {
-        let item = movieAtt[i];
-        detSec.append($('<p>').addClass('detail').text(item + ': ' + go.curQ[item]));
-    }
-}
-
 //game object
 go = {
     state: 'start',
@@ -110,7 +41,7 @@ go = {
         }
 
         //re-make question HTML
-        makeQuestionHTML();
+        dom.makeQuestionHTML();
 
         //splice 4 answers from main array into game array
         for (let i = 0; i < 4; i++) {
@@ -148,7 +79,7 @@ go = {
         return "Wrong!";
     },
     showResult: function(sts) {
-        showAnswerPic(sts);
+        dom.showAnswerPic(sts);
         setTimeout(() => { this.newQuestion(); }, to.switchLimit * 1000);
     },
     resetQuestions: function() {
@@ -158,9 +89,9 @@ go = {
         }
     },
     gameOver: function(sts) {
-        showAnswerPic(sts);
+        dom.showAnswerPic(sts);
         this.state = 'over';
-        setTimeout(() => { makeEndingPage(); }, to.switchLimit * 1000);
+        setTimeout(() => { dom.makeEndingPage(); }, to.switchLimit * 1000);
     }
 }
 
@@ -200,4 +131,73 @@ to = {
     }
 }
 
-makeStartPage();
+//html and dom object
+let dom = {
+    makeStartPage: function() {
+        $('#main').append($('<section>').addClass('row startRow').append($('<p>').text(introText)));
+        $('#main').append($('<section>').addClass('row startRow').attr('id', 'buttonRow')
+            .append($('<button>').addClass('startBtn').text('Action!')
+                .click(function() {
+                    $('section').remove('.startRow');
+                    go.init();
+                })
+            )
+        );
+    },
+    makeQuestionHTML: function() {
+        $('section').remove();
+        $('img').remove();
+        $('#main').append($('<section>').addClass('row qRow').attr('id', 'timerRow'));
+        $('#timerRow').append($('<div>').addClass('timer').text('Time Remaining: ').append($('<span>').attr('id', 'timer')));
+        $('#timerRow').append($('<div>').addClass('score').text('Score: ').append($('<span>').attr('id', 'score').text(go.numberCorrect)));
+        $('#main').append($('<section>').addClass('row qRow').attr('id', 'questionRow'));
+        $('#main').append($('<section>').addClass('row qRow').attr('id', 'answerRow'));
+        $('#questionRow').append($('<div>').addClass('question').attr('id', 'question').text('question goes here'));
+        for (let i = 0; i < 4; i++) {
+            let answerDiv = $('<div>').addClass('answer').attr('id', i).text('answer ' + i)
+                .click(function() { go.checkAnswer(this.id); });
+            $('#answerRow').append(answerDiv);
+        }
+    },
+    makeEndingPage: function() {
+        $('section').remove();
+        $('img').remove();
+        let resultSec = $('<section>').addClass('row');
+        $('#main').append(resultSec);
+        let numRight = go.numberCorrect;
+        let msg = '';
+        if (numRight < 5) {
+            msg = 'Better luck next time!';
+        } else if (numRight < 9) {
+            msg = 'Good job!';
+        } else {
+            msg = "You're an expert!";
+        }
+        resultSec.append($('<p>').text(msg));
+        resultSec.append($('<p>').text('Correct: ' + go.numberCorrect));
+        resultSec.append($('<p>').text('Wrong: ' + go.numberWrong));
+        let percRight = go.numberCorrect / go.quizLength * 100;
+        resultSec.append($('<p>').text("That's " + percRight + '% correct!'));
+        resultSec.append($('<button>').text("Restart")
+            .click(function() { go.init(); })
+        )
+    },
+    showAnswerPic: function(sts) {
+        $('section').remove('.qRow');
+        let textSec = $('<section>').addClass('row');
+        textSec.append($('<p>').text(sts));
+        textSec.append($('<p>').text("The right answer was " + go.curA + '.'));
+        $('#main').append(textSec);
+        $('#main').append($('<img>').attr('src', go.curQ.Poster));
+        let detSec = $('<section>').addClass('row');
+        $('#main').append(detSec);
+        let movieAtt = ['Director', 'Year', 'Rated', 'Released', 'Runtime'];
+        for (let i = 0; i < movieAtt.length; i++) {
+            let item = movieAtt[i];
+            detSec.append($('<p>').addClass('detail').text(item + ': ' + go.curQ[item]));
+        }
+    }
+}
+
+//make start page, all other events cascade from user clicks
+dom.makeStartPage();

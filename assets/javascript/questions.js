@@ -1,4 +1,4 @@
-let movies = [
+let randomMovies = [
     'the wizard of oz', 'citizen kane', 'kazaam', 'god father', 'boiler room', 'inception',
     'the dark night', 'raging bull', 'cool runnings', 'harold and maude', 'labyrinth', 'kindergarten cop',
     'the karate kid', 'crocodile dundee', 'overboard', 'troop beverly hills', 'pulp fiction', 'big',
@@ -6,7 +6,6 @@ let movies = [
     'lost in translation', 'snakes on a plane', 'evil dead', 'bubba ho-tep', 'yellow submarine', "a hard day's night",
     'the sandlot', 'beethoven', 'die hard', 'gattaca', 'pitch perfect'
 ];
-
 
 let actionMovies = [
     'commando', 'predator', 'die hard', 'conan the destroyer', 'conan the barbarian',

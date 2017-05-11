@@ -141,13 +141,10 @@ go = {
     answerIsCorrect: function(answerID) {
         this.numberCorrect += 1;
         $('#score').text(this.numberCorrect);
-        $('#' + answerID).addClass('correct');
         return "Correct!";
     },
     answerIsWrong: function(answerID, rightAnswerID) {
         this.numberWrong += 1;
-        $('#' + answerID).addClass('wrong');
-        $('#' + rightAnswerID).addClass('correct');
         return "Wrong!";
     },
     showResult: function(sts) {

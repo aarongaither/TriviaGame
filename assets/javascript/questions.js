@@ -19,6 +19,8 @@ let actionMovies = [
     'the fifth element', 'true lies', 'the transporter', 'red'
 ];
 
+let movieList = actionMovies;
+
 function checkMovies(list) {
     for (let i = 0; i < list.length; i++) {
         let title = list[i].replace(/ /g, '+');
@@ -32,3 +34,11 @@ function checkMovies(list) {
     }
 } 
 
+let introText = `Welcome to the 'Action Movie Quiz!'
+You will be presented with a movie plot.
+Your job is to match the plot to the appropriate movie title.
+All movies are of the governator action genre.
+But be quick. You'll only have 15 seconds to guess for each plot!
+All movie plots and images are provided by the OMDBapi,
+so if there are inconsistencies or innaccuracies, it ain't my fault!
+Click below to begin...`

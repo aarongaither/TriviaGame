@@ -91,3 +91,30 @@ header {
 .wrong {
     box-shadow: inset 0 0 20px red;
 }
+
+section>p {
+    font-size: 1.8rem;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+section>p.detail {
+    font-size: 1.4rem;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+button {
+    width: 20%;
+    margin: 4% 40%;
+    text-align: center;
+    font-size: 2.0rem;
+}
+
+img {
+    margin: 2% 35%;
+}

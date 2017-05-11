@@ -1,8 +1,15 @@
 movieList = actionMovies;
 
+function makeStartPage() {
+
+}
+
 function makeQuestionHTML() {
-    $('#main').append($('<div>').addClass('row').attr('id','questionRow'));
-    $('#main').append($('<div>').addClass('row').attr('id','answerRow'));
+    $('#main').append($('<section>').addClass('row').attr('id', 'timerRow'));
+    $('#timerRow').append($('<div>').addClass('timer').text('Time Remaining: ').append($('<span>').attr('id','timer')));
+    $('#timerRow').append($('<div>').addClass('score').text('Score: ').append($('<span>').attr('id','score').text('0')));
+    $('#main').append($('<section>').addClass('row').attr('id','questionRow'));
+    $('#main').append($('<section>').addClass('row').attr('id','answerRow'));
     $('#questionRow').append($('<div>').addClass('question').attr('id', 'question').text('question goes here'));
     for (let i = 0; i < 4; i++) {
         let answerDiv = $('<div>').addClass('answer').attr('id', i).text('answer ' + i)

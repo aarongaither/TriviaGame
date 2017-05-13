@@ -8,7 +8,7 @@ html {
 
 body {
     margin: 0;
-    background: rgba(0, 106, 150, 1.0);
+    background: rgba(0, 0, 0, 1.0);
     text-align: left;
 }
 
@@ -30,6 +30,7 @@ header {
     font-family: 'Orbitron', sans-serif;
     text-align: center;
     color: rgba(255, 205, 0, 1.0);
+    text-shadow: 0 2px 0 red;
 
 }
 
@@ -37,26 +38,32 @@ header {
     box-sizing: border-box;
     display: inline-block;
     font-size: 2.0rem;
-    font-family: 'Audiowide', cursive;
-    text-align: center;
-    width: 35%;
+    font-family: 'Overpass Mono', monospace;
+    width: 40%;
     color: rgba(255, 205, 0, 1.0);
-    background-color: white;
-    border-radius: 10px;
-    margin: 2% 7% 0;
+    margin: 2% 5% 0;
     padding: 1%;
+}
+
+.timer {
+    text-align: left;
+}
+
+.score {
+    text-align: right;
 }
 
 .question {
     font-size: 2.0rem;
     font-family: 'Orbitron', sans-serif;
     text-align: center;
-    color: rgba(255, 205, 0, 1.0);
-    width: 70%;
+    color: white;
+    width: 90%;
     background-color: white;
     border-radius: 10px;
     margin: 2% auto 0 auto;
-    padding: 1%;
+    padding: 1% 1% 2%;
+    line-height: 120%;
 }
 
 .answer {
@@ -66,14 +73,15 @@ header {
     text-align: center;
     display: inline-block;
     position: relative;
-    width: 36%;
+    width: 40%;
+    color: red;
     background-color: white;
     border-radius: 10px;
-    margin: 2% 7% 0;
+    margin: 2% 5% 0;
     padding: 1%;
-    box-shadow: 0 8px 6px -6px black;
     transition: 1s ease;
     cursor: pointer;
+    text-shadow: 0 2px 0 black;
 }
 
 #questionRow {
@@ -90,6 +98,7 @@ section>p {
     margin: 0 auto;
     text-align: center;
     font-family: 'Audiowide', cursive;
+    color: rgba(255, 205, 0, 1.0);
 }
 
 section>p.detail {
@@ -109,7 +118,31 @@ button {
 
 img {
     margin: 2% 35%;
+    background-color: white;
+    padding: 1%;
 }
 
-/*font-family: 'Audiowide', cursive;
-font-family: 'Orbitron', sans-serif;*/
+.startRow>p {
+    color: red;
+}
+
+.qLet {
+    transition: 1s ease;
+}
+
+.blockEffect {
+    text-shadow: 0 1px 0 #c9cfce, 
+      0 2px 0 #bcc2c2, 
+      0 3px 0 #afb6b6, 
+      0 4px 0 #a4adac, 
+      0 5px 0 #9fa8a7,
+      0 0 5px rgba(0,0,0,.05),
+      0 1px 3px rgba(0,0,0,.2), 
+      0 3px 5px rgba(0,0,0,.2), 
+      0 5px 10px rgba(0,0,0,.2), 
+      0 10px 10px rgba(0,0,0,.2);
+}
+
+.transText {
+    color: black;
+}

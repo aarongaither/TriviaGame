@@ -1,12 +1,12 @@
 //game object
 go = {
-    state: 'start',         //game state
-    qUsed: [],              //used questions
-    answers: [],            //potential answers for current question
-    curA: '',               //correct answer
-    numberCorrect: 0,       //number of answers user has guessed
-    numberWrong: 0,         //number of answers user has failed to guess
-    quizLength: 5,          //number of questions to ask
+    state: 'start', //game state
+    qUsed: [], //used questions
+    answers: [], //potential answers for current question
+    curA: '', //correct answer
+    numberCorrect: 0, //number of answers user has guessed
+    numberWrong: 0, //number of answers user has failed to guess
+    quizLength: 5, //number of questions to ask
     init: function() {
         //reset game vars
         this.state = 'playing';
@@ -21,14 +21,6 @@ go = {
             return Math.floor(Math.random() * max);
         }
 
-        function updatePage(movieObj) {
-            //updates page with question text and answer text
-            $('#question').text(movieObj.Plot);
-            for (let i = 0; i < go.answers.length; i++) {
-                $('#' + i).text(go.answers[i]).removeClass('correct wrong');
-            }
-        }
-
         function fetchMovie() {
             //fetch movie info from API
             let title = go.curA.replace(/ /g, '+');
@@ -38,15 +30,15 @@ go = {
                 method: 'GET'
             }).done(function(response) {
                 //re-make question HTML
-                dom.makeQuestionHTML();
-                //update page with movie info
-                updatePage(response);
-                //start the timer
-                to.start(to.questionLimit);
+                dom.makeQuestionPage(response);
                 //store the fetch result for use later
                 go.curQ = response;
                 //update game state
                 go.state = 'playing';
+                //perform css anim on question, slight delay to ensure transition effect
+                setTimeout(() => { dom.animateQuestion(); }, 500);
+                //start the timer, after text has displayed
+                setTimeout(() => { to.start(to.questionLimit); }, response.Plot.length * 50);
             });
         }
 
@@ -169,20 +161,36 @@ let dom = {
             )
         );
     },
-    makeQuestionHTML: function() {
+    makeQuestionPage: function(movieObj) {
+        function updatePage(movieObj) {
+            //updates page with question text and answer text
+            let q = movieObj.Plot;
+            for (let i = 0; i < q.length; i++) {
+                $('#question').append($('<span>').addClass('qLet').text(q.charAt(i)));
+            };
+            // $('#question').text(movieObj.Plot);
+            for (let i = 0; i < go.answers.length; i++) {
+                $('#' + i).text(go.answers[i]);
+            }
+        }
+        //remove results page if it was displayed
         $('section').remove();
         $('img').remove();
+        //create timer and score
         $('#main').append($('<section>').addClass('row qRow').attr('id', 'timerRow'));
         $('#timerRow').append($('<div>').addClass('timer').text('Time Remaining: ').append($('<span>').attr('id', 'timer')));
         $('#timerRow').append($('<div>').addClass('score').text('Score: ').append($('<span>').attr('id', 'score').text(go.numberCorrect)));
+        //create question row
         $('#main').append($('<section>').addClass('row qRow').attr('id', 'questionRow'));
+        $('#questionRow').append($('<div>').addClass('question').attr('id', 'question'));
+        //create answer row
         $('#main').append($('<section>').addClass('row qRow').attr('id', 'answerRow'));
-        $('#questionRow').append($('<div>').addClass('question').attr('id', 'question').text('question goes here'));
         for (let i = 0; i < 4; i++) {
-            let answerDiv = $('<div>').addClass('answer').attr('id', i).text('answer ' + i)
+            let answerDiv = $('<div>').addClass('answer').attr('id', i)
                 .click(function() { go.checkAnswer(this.id); });
             $('#answerRow').append(answerDiv);
         }
+        updatePage(movieObj);
     },
     makeEndingPage: function() {
         $('section').remove();
@@ -221,6 +229,16 @@ let dom = {
             let item = movieAtt[i];
             detSec.append($('<p>').addClass('detail').text(item + ': ' + go.curQ[item]));
         }
+    },
+    animateQuestion: function() {
+        console.log("Started anim func");
+        $('.qLet').each(function(index, value) {
+            let elem = $(this);
+            let del = index * 50;
+            setTimeout(() => { elem.addClass('blockEffect'); }, del);
+            setTimeout(() => { elem.addClass('transText'); }, del + 50);
+        })
+
     }
 }
 

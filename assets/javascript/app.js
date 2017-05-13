@@ -66,16 +66,24 @@ go = {
         fetchMovie();
 
     },
-    checkAnswer: function(num) {
+    checkAnswer: function(userAnswer) {
         //user has clicked an answer, change state so no more answers can be clicked
         if (this.state === 'playing') {
             this.state = 'guessed';
             //stop the timer
             to.stop();
-            //determine the array index of the correct answer
-            let correctID = this.answers.indexOf(this.curA);
-            //compare correct index with one received from click
-            let status = parseInt(num) === correctID ? this.answerIsCorrect(num) : this.answerIsWrong(num, correctID);
+            let status;
+            if (userAnswer === "Time is up!") {
+                status = userAnswer;
+                this.answerIsWrong();
+            } else {
+                //determine the array index of the correct answer
+                let correctID = this.answers.indexOf(this.curA);
+                //compare correct index with one received from click
+                status = parseInt(userAnswer) === correctID ? this.answerIsCorrect() : this.answerIsWrong();
+            }
+            //loop through potential answers
+            //if the correct answer, push to used list, else return to master list for re-use
             let cnt = this.answers.length;
             for (let i = 0; i < cnt; i++) {
                 let item = this.answers.pop();
@@ -84,12 +92,14 @@ go = {
             this.numberCorrect + this.numberWrong < this.quizLength ? this.showResult(status) : this.gameOver(status);
         }
     },
-    answerIsCorrect: function(answerID) {
+    answerIsCorrect: function() {
+        //increment counter, update page display, return response to display on result page
         this.numberCorrect += 1;
         $('#score').text(this.numberCorrect);
         return "Correct!";
     },
-    answerIsWrong: function(answerID, rightAnswerID) {
+    answerIsWrong: function() {
+        //increment counter, return response to display on result page
         this.numberWrong += 1;
         return "Wrong!";
     },
@@ -131,7 +141,7 @@ to = {
         this.time -= 1;
         this.updateDisplay();
         if (this.time < 1) {
-            go.checkAnswer(4);
+            go.checkAnswer("Time is up!");
         }
     },
     stop: function() {
@@ -214,5 +224,7 @@ let dom = {
     }
 }
 
-//make start page, all other events cascade from user clicks
+//make start page with start button
+//after start button is clicked, game starts
+//after game start all logic is driven off click listeners and the checkAnswer func
 dom.makeStartPage();

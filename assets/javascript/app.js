@@ -1,17 +1,19 @@
 //game object
 go = {
-    state: 'start',
-    qUsed: [],
-    answers: [],
-    curA: '',
-    numberCorrect: 0,
-    numberWrong: 0,
-    quizLength: 10,
+    state: 'start',         //game state
+    qUsed: [],              //used questions
+    answers: [],            //potential answers for current question
+    curA: '',               //correct answer
+    numberCorrect: 0,       //number of answers user has guessed
+    numberWrong: 0,         //number of answers user has failed to guess
+    quizLength: 5,          //number of questions to ask
     init: function() {
+        //reset game vars
         this.state = 'playing';
         this.numberCorrect = 0;
         this.numberWrong = 0;
         this.resetQuestions();
+        //get first question, which effectively starts the game
         this.newQuestion();
     },
     newQuestion: function() {
@@ -20,6 +22,7 @@ go = {
         }
 
         function updatePage(movieObj) {
+            //updates page with question text and answer text
             $('#question').text(movieObj.Plot);
             for (let i = 0; i < go.answers.length; i++) {
                 $('#' + i).text(go.answers[i]).removeClass('correct wrong');
@@ -27,39 +30,51 @@ go = {
         }
 
         function fetchMovie() {
+            //fetch movie info from API
             let title = go.curA.replace(/ /g, '+');
             let queryURL = 'https://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
             $.ajax({
                 url: queryURL,
                 method: 'GET'
             }).done(function(response) {
+                //re-make question HTML
+                dom.makeQuestionHTML();
+                //update page with movie info
                 updatePage(response);
+                //start the timer
                 to.start(to.questionLimit);
+                //store the fetch result for use later
                 go.curQ = response;
+                //update game state
                 go.state = 'playing';
             });
         }
-
-        //re-make question HTML
-        dom.makeQuestionHTML();
 
         //splice 4 answers from main array into game array
         for (let i = 0; i < 4; i++) {
             let rand = getRandom(movieList.length);
             go.answers.push(movieList.splice(rand, 1)[0]);
         }
+
         //select one answer as the correct one
         let rand = getRandom(go.answers.length);
         go.curA = go.answers[rand];
+
         //fetch movie info for our correct answer
+        //also calls rest of game start functions after response
+        //so we don't end up out of sync
         fetchMovie();
 
     },
     checkAnswer: function(num) {
+        //user has clicked an answer, change state so no more answers can be clicked
         if (this.state === 'playing') {
-            this.state = 'guessed'
+            this.state = 'guessed';
+            //stop the timer
             to.stop();
+            //determine the array index of the correct answer
             let correctID = this.answers.indexOf(this.curA);
+            //compare correct index with one received from click
             let status = parseInt(num) === correctID ? this.answerIsCorrect(num) : this.answerIsWrong(num, correctID);
             let cnt = this.answers.length;
             for (let i = 0; i < cnt; i++) {

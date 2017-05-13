@@ -28,7 +28,7 @@ go = {
 
         function fetchMovie() {
             let title = go.curA.replace(/ /g, '+');
-            let queryURL = 'http://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
+            let queryURL = 'https://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
             $.ajax({
                 url: queryURL,
                 method: 'GET'

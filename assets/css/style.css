@@ -27,7 +27,7 @@ body {
 
 header {
     font-size: 3.5rem;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Orbitron', sans-serif;
     text-align: center;
     color: rgba(255, 205, 0, 1.0);
 
@@ -37,7 +37,7 @@ header {
     box-sizing: border-box;
     display: inline-block;
     font-size: 2.0rem;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Audiowide', cursive;
     text-align: center;
     width: 35%;
     color: rgba(255, 205, 0, 1.0);
@@ -49,7 +49,7 @@ header {
 
 .question {
     font-size: 2.0rem;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Orbitron', sans-serif;
     text-align: center;
     color: rgba(255, 205, 0, 1.0);
     width: 70%;
@@ -62,7 +62,7 @@ header {
 .answer {
     box-sizing: border-box;
     font-size: 1.5rem;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Audiowide', cursive;
     text-align: center;
     display: inline-block;
     position: relative;
@@ -89,7 +89,7 @@ section>p {
     width: 90%;
     margin: 0 auto;
     text-align: center;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Audiowide', cursive;
 }
 
 section>p.detail {
@@ -97,7 +97,7 @@ section>p.detail {
     width: 90%;
     margin: 0 auto;
     text-align: center;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Audiowide', cursive;
 }
 
 button {
@@ -110,3 +110,6 @@ button {
 img {
     margin: 2% 35%;
 }
+
+/*font-family: 'Audiowide', cursive;
+font-family: 'Orbitron', sans-serif;*/

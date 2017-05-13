@@ -82,6 +82,13 @@ header {
     transition: 1s ease;
     cursor: pointer;
     text-shadow: 0 2px 0 black;
+    transition: 0.6s ease;
+    border: 1px solid white;
+}
+
+.answer:hover{
+    background-color: rgba(255,255,255,0.25);
+    border: 1px solid red;
 }
 
 #answerRow {
@@ -110,6 +117,15 @@ button {
     margin: 4% 40%;
     text-align: center;
     font-size: 2.0rem;
+    font-family: 'Audiowide', cursive;
+    color: red;
+    background-color: white;
+    border-radius: 8px;
+    transition: 0.6s ease;
+}
+
+button:hover{
+    background-color: rgba(255,255,255,0.25);
 }
 
 img {

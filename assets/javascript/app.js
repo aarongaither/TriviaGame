@@ -6,7 +6,7 @@ go = {
     curA: '', //correct answer
     numberCorrect: 0, //number of answers user has guessed
     numberWrong: 0, //number of answers user has failed to guess
-    quizLength: 5, //number of questions to ask
+    quizLength: 10, //number of questions to ask
     init: function() {
         //reset game vars
         this.state = 'playing';
@@ -197,23 +197,38 @@ let dom = {
         $('img').remove();
         let resultSec = $('<section>').addClass('row');
         $('#main').append(resultSec);
-        let numRight = go.numberCorrect;
-        let msg = '';
-        if (numRight < 5) {
+        let percRight = go.numberCorrect / go.quizLength * 100;
+        let msg;
+        let gif;
+        if (percRight < 30) {
+            msg = "You didn't even try.";
+            gif = "awful";
+        } else if (percRight < 50) {
             msg = 'Better luck next time!';
-        } else if (numRight < 9) {
+            gif = 'meh';
+        } else if (percRight < 90) {
             msg = 'Good job!';
+            gif = 'good+job';
         } else {
             msg = "You're an expert!";
+            gif = 'amazing';
         }
         resultSec.append($('<p>').text(msg));
         resultSec.append($('<p>').text('Correct: ' + go.numberCorrect));
         resultSec.append($('<p>').text('Wrong: ' + go.numberWrong));
-        let percRight = go.numberCorrect / go.quizLength * 100;
         resultSec.append($('<p>').text("That's " + percRight + '% correct!'));
         resultSec.append($('<button>').text("Restart")
             .click(function() { go.init(); })
         )
+        //giphy cause why not
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q="+gif+"&limit=1&api_key=dc6zaTOxFJmzC";
+        $.ajax({
+          url: queryURL,
+          method: 'GET'
+        }).done(function(response) {
+            console.log(response);
+            resultSec.append($('<img>').attr('src', response.data[0].images.downsized.url));
+        });
     },
     showAnswerPic: function(sts) {
         $('section').remove('.qRow');
@@ -231,12 +246,11 @@ let dom = {
         }
     },
     animateQuestion: function() {
-        console.log("Started anim func");
         $('.qLet').each(function(index, value) {
             let elem = $(this);
             let del = index * 50;
             setTimeout(() => { elem.addClass('blockEffect'); }, del);
-            setTimeout(() => { elem.addClass('transText'); }, del + 50);
+            setTimeout(() => { elem.addClass('transText'); }, del + 200);
         })
 
     }

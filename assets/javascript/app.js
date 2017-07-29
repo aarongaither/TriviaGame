@@ -1,4 +1,4 @@
-(function(){
+(function() {
     //game object
     go = {
         state: 'start', //game state
@@ -21,23 +21,6 @@
                 return Math.floor(Math.random() * max);
             }
 
-            function fetchMovie() {
-                let title = go.curA.replace(/ /g, '+');
-                let queryURL = 'https://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
-                $.ajax({
-                    url: queryURL,
-                    method: 'GET'
-                }).done(function(response) {
-                    dom.makeQuestionPage(response);
-                    go.curQ = response;
-                    go.state = 'playing';
-                    //perform css anim on question, slight delay to ensure transition effect
-                    setTimeout(() => dom.animateQuestion(), 500);
-                    //start the timer, after text has displayed
-                    setTimeout(() => to.start(to.questionLimit), response.Plot.length * 50);
-                });
-            }
-
             //splice 4 answers from main array into game array
             for (let i = 0; i < 4; i++) {
                 let rand = getRandom(questions.movieList.length);
@@ -47,11 +30,13 @@
             //select one answer as the correct one
             let rand = getRandom(go.answers.length);
             go.curA = go.answers[rand];
+            dom.makeQuestionPage(go.curA);
+            go.state = 'playing';
 
-            //fetch movie info for our correct answer
-            //also calls rest of game start functions after response
-            //so we don't end up out of sync
-            fetchMovie();
+            //perform css anim on question, slight delay to ensure transition effect
+            setTimeout(() => dom.animateQuestion(), 500);
+            //start the timer, after text has displayed
+            setTimeout(() => to.start(to.questionLimit), go.curA.plot.length * 50);
 
         },
         checkAnswer(userAnswer) {
@@ -151,18 +136,13 @@
                 )
             );
         },
+        makeQuestion(movieObj) {
+            movieObj.plot.split('').forEach(e => $('#question').append($('<span>').addClass('qLet').text(e)))
+        },
+        makeAnswers() {
+            go.answers.forEach((e, i) => $('#' + i).text(e.title));
+        },
         makeQuestionPage(movieObj) {
-            function updatePage(movieObj) {
-                //updates page with question text and answer text
-                const q = movieObj.Plot;
-                for (let i = 0; i < q.length; i++) {
-                    $('#question').append($('<span>').addClass('qLet').text(q.charAt(i)));
-                };
-                // $('#question').text(movieObj.Plot);
-                for (let i = 0; i < go.answers.length; i++) {
-                    $('#' + i).text(go.answers[i]);
-                }
-            }
             //remove results page if it was displayed
             $('section').remove();
             $('img').remove();
@@ -180,14 +160,17 @@
                     .click(function() { go.checkAnswer(this.id); });
                 $('#answerRow').append(answerDiv);
             }
-            updatePage(movieObj);
+            this.makeQuestion(movieObj);
+            this.makeAnswers();
         },
         makeEndingPage() {
             $('section').remove();
             $('img').remove();
-            let resultSec = $('<section>').addClass('row');
+
+            const resultSec = $('<section>').addClass('row');
             $('#main').append(resultSec);
-            let percRight = go.numberCorrect / go.quizLength * 100;
+            
+            const percRight = go.numberCorrect / go.quizLength * 100;
             let msg;
             let gif;
             if (percRight < 30) {
@@ -211,10 +194,10 @@
                 .click(function() { go.init(); })
             )
             //giphy cause why not
-            var queryURL = "https://api.giphy.com/v1/gifs/search?q="+gif+"&limit=1&api_key=dc6zaTOxFJmzC";
+            const queryURL = "https://api.giphy.com/v1/gifs/search?q=" + gif + "&limit=1&api_key=dc6zaTOxFJmzC";
             $.ajax({
-              url: queryURL,
-              method: 'GET'
+                url: queryURL,
+                method: 'GET'
             }).done(function(response) {
                 console.log(response);
                 resultSec.append($('<img>').attr('src', response.data[0].images.downsized.url));
@@ -224,16 +207,14 @@
             $('section').remove('.qRow');
             let textSec = $('<section>').addClass('row');
             textSec.append($('<p>').text(status));
-            textSec.append($('<p>').text("The right answer was " + go.curA + '.'));
+            textSec.append($('<p>').text("The right answer was " + go.curA.title + '.'));
             $('#main').append(textSec);
-            $('#main').append($('<img>').attr('src', go.curQ.Poster));
-            let detSec = $('<section>').addClass('row');
-            $('#main').append(detSec);
-            let movieAtt = ['Director', 'Year', 'Rated', 'Released', 'Runtime'];
-            for (let i = 0; i < movieAtt.length; i++) {
-                let item = movieAtt[i];
-                detSec.append($('<p>').addClass('detail').text(item + ': ' + go.curQ[item]));
-            }
+            $('#main').append($('<img>').attr('src', 'assets/images/' + go.curA.poster));
+            let detailSection = $('<section>').addClass('row');
+            $('#main').append(detailSection);
+            ['director', 'year', 'rated', 'runtime'].forEach(e => {
+                detailSection.append($('<p>').addClass('detail').text(e + ': ' + go.curA[e]));
+            })
         },
         animateQuestion() {
             $('.qLet').each(function(index, value) {
